@@ -1,0 +1,36 @@
+@startuml Database
+
+' Define entities and tables
+entity "User" as user {
+  + id INT PK
+  --
+  username VARCHAR(50) NN
+  password VARCHAR(100) NN
+  email VARCHAR(100) NN
+  role VARCHAR(50) NN
+}
+
+entity "Event" as event {
+  + id INT PK
+  --
+  name VARCHAR(100) NN
+  date DATE NN
+  location VARCHAR(200)
+  description TEXT
+}
+
+entity "Job" as job {
+  + id INT PK
+  --
+  title VARCHAR(100) NN
+  company VARCHAR(100) NN
+  location VARCHAR(200)
+  description TEXT
+  salary DECIMAL(10, 2)
+}
+
+' Relationships
+user -- event : attends
+user -- job : applies
+
+@enduml

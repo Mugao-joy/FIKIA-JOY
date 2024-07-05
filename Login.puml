@@ -1,0 +1,15 @@
+@startuml Login
+
+actor User as user
+participant "Frontend Form" as form
+participant "Backend Server" as backend
+participant "Database" as db
+
+user -> form : 1. Submit Login Form
+form -> backend : 2. Validate Credentials
+backend -> db : 3. Fetch User Record
+db --> backend : 4. User Record
+backend -> backend : 5. Generate JWT Token
+backend -> form : 6. Return Token
+
+@enduml

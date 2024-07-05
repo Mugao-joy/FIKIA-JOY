@@ -1,0 +1,61 @@
+@startuml Front-End
+allowmixing
+
+'interfaces and components
+interface "Student Interface" as studentUI {
+  + browseJobs()
+  + viewEvents()
+  + updateProfile()
+}
+
+interface "University Admin Interface" as adminUI {
+  + manageEvents()
+  + postJobs()
+  + viewStudents()
+}
+
+interface "Recruiter Interface" as recruiterUI {
+  + searchCandidates()
+  + postJobs()
+  + viewApplications()
+}
+
+' Frontend Services
+package "Frontend Services (React.js)" {
+  component "Authentication Service" as authService {
+    rectangle "Auth Components" as authComponents
+    rectangle "Auth API" as authApi
+  }
+
+  component "Profile Service" as profileService {
+    rectangle "Profile Components" as profileComponents
+    rectangle "Profile API" as profileApi
+  }
+
+  component "Job Service" as jobService {
+    rectangle "Job Components" as jobComponents
+    rectangle "Job API" as jobApi
+  }
+
+  component "Event Service" as eventService {
+    rectangle "Event Components" as eventComponents
+    rectangle "Event API" as eventApi
+  }
+}
+
+' Interactions between interfaces and services
+studentUI --> authService : "Login/Logout"
+studentUI --> profileService : "Update Profile"
+studentUI --> jobService : "Browse Jobs"
+studentUI --> eventService : "View Events"
+
+adminUI --> authService : "Login/Logout"
+adminUI --> eventService : "Manage Events"
+adminUI --> jobService : "Post Jobs"
+adminUI --> profileService : "View Students"
+
+recruiterUI --> authService : "Login/Logout"
+recruiterUI --> jobService : "Post Jobs"
+recruiterUI --> jobService : "View Applications"
+
+@enduml

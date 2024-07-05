@@ -1,0 +1,17 @@
+@startuml Search
+
+actor User as user
+participant "Frontend Form" as form
+participant "Search Service" as searchService
+participant "Elasticsearch" as es
+participant "Backend Server" as backend
+
+user -> form : 1. Submit Search Query
+form -> searchService : 2. Send Search Request
+searchService -> es : 3. Query Elasticsearch
+es --> searchService : 4. Return Search Results
+searchService -> backend : 5. Process Results
+backend -> form : 6. Return Processed Results
+form --> user : 7. Display Results
+
+@enduml

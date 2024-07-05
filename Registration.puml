@@ -1,0 +1,17 @@
+@startuml User Registration
+
+actor User as user
+participant "Frontend Form" as form
+participant "Backend Server" as backend
+participant "Database" as db
+participant "Email Service" as email
+
+user -> form : 1. Submit Registration Form
+form -> backend : 2. Validate Data
+backend -> db : 3. Store User Information
+backend -> email : 4. Send Verification Email
+email --> user : 5. Receive Verification Email
+user -> form : 6. Verify Email
+form -> backend : 7. Update User Status
+
+@enduml
