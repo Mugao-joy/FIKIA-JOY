@@ -1,17 +1,48 @@
-@startuml User Registration
+@startuml Registration
+actor "Student" as student
+actor "University Admin" as universityAdmin
+actor "Company Recruiter" as companyRecruiter
 
-actor User as user
-participant "Frontend Form" as form
-participant "Backend Server" as backend
-participant "Database" as db
-participant "Email Service" as email
+participant "Frontend (React.js)" as frontend
+participant "Backend (Node.js/Express.js)" as backend
+participant "Database (PostgreSQL)" as database
+participant "Email Service" as emailService
 
-user -> form : 1. Submit Registration Form
-form -> backend : 2. Validate Data
-backend -> db : 3. Store User Information
-backend -> email : 4. Send Verification Email
-email --> user : 5. Receive Verification Email
-user -> form : 6. Verify Email
-form -> backend : 7. Update User Status
+' Student Registration
+student -> frontend : Submit Registration Form
+frontend -> backend : Validate Data
+backend -> database : Store Student Information
+backend -> emailService : Send Verification Email
+emailService -> student : Receive Verification Email
+student -> backend : Verify Email
+backend -> database : Update User Status to Active
+
+' University Admin Registration
+universityAdmin -> frontend : Submit Registration Form
+frontend -> backend : Validate Corporate Email
+backend -> database : Check Corporate Email Domain
+alt Corporate Email Valid
+    backend -> database : Store University Admin Information
+    backend -> emailService : Send Verification Email
+    emailService -> universityAdmin : Receive Verification Email
+    universityAdmin -> backend : Verify Email
+    backend -> database : Update User Status to Active
+else Invalid Email
+    backend -> frontend : Display Error Message
+end
+
+' Company Recruiter Registration
+companyRecruiter -> frontend : Submit Registration Form
+frontend -> backend : Validate Corporate Email
+backend -> database : Check Corporate Email Domain
+alt Corporate Email Valid
+    backend -> database : Store Recruiter Information
+    backend -> emailService : Send Verification Email
+    emailService -> companyRecruiter : Receive Verification Email
+    companyRecruiter -> backend : Verify Email
+    backend -> database : Update User Status to Active
+else Invalid Email
+    backend -> frontend : Display Error Message
+end
 
 @enduml

@@ -1,36 +1,75 @@
 @startuml Database
 
-' Define entities and tables
-entity "User" as user {
-  + id INT PK
-  --
-  username VARCHAR(50) NN
-  password VARCHAR(100) NN
-  email VARCHAR(100) NN
-  role VARCHAR(50) NN
+'colors and styles
+skinparam class {
+  BackgroundColor<<Table>> #D0E6A5
+  BorderColor<<Table>> #3C8D2F
 }
 
-entity "Event" as event {
-  + id INT PK
-  --
-  name VARCHAR(100) NN
-  date DATE NN
-  location VARCHAR(200)
-  description TEXT
+'Database Tables
+class "Student" <<Table>> {
+  +id: UUID
+  +name: String
+  +email: String
+  +profile: Text
+
 }
 
-entity "Job" as job {
-  + id INT PK
-  --
-  title VARCHAR(100) NN
-  company VARCHAR(100) NN
-  location VARCHAR(200)
-  description TEXT
-  salary DECIMAL(10, 2)
+class "Job" <<Table>> {
+  +id: UUID
+  +title: String
+  +description: Text
+  +company: String
+  +location: String
+  +type: String
+  +posted_at: DateTime
+  +expires_at: DateTime
+  +created_at: DateTime
+  +updated_at: DateTime
+}
+
+class "University" <<Table>> {
+  +id: UUID
+  +name: String
+  +location: String
+  +description: Text
+
+}
+
+class "Event" <<Table>> {
+  +id: UUID
+  +title: String
+  +description: Text
+  +university_id: UUID
+  +location: String
+  +date: DateTime
+  +created_at: DateTime
+  +updated_at: DateTime
+}
+
+class "Recruiter" <<Table>> {
+  +id: UUID
+  +name: String
+  +email: String
+  +company: String
+  +profile: Text
+
 }
 
 ' Relationships
-user -- event : attends
-user -- job : applies
+Student "1" -- "0..*" Job : applies
+Student "1" -- "0..*" Event : attends
+Recruiter "1" -- "0..*" Event : attends
+University "1" -- "0..*" Event : organizes
+Recruiter "1" -- "0..*" Job : posts
+
+' Indexes and Constraints
+class "Indexes and Constraints" {
+  *Student: email (unique)
+  *Job: title, location, type (indexed)
+  *University: name (unique)
+  *Event: university_id, date (indexed)
+  *Recruiter: email (unique)
+}
 
 @enduml

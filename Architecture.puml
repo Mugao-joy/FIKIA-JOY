@@ -1,76 +1,118 @@
-@startuml Fikia
+@startuml High Level Architecure
 
-'Users
+' Define colors
+skinparam component {
+  BackgroundColor<<Frontend>> LightSkyBlue
+  BackgroundColor<<Backend>> LightGreen
+  BackgroundColor<<Database>> LightGoldenRodYellow
+  BackgroundColor<<Auth0>> LightPink
+  BackgroundColor<<Redis>> LightCoral
+  BackgroundColor<<Storage>> LightSteelBlue
+}
+
+' Define Users
 actor "Students" as students
 actor "University Admins" as admins
 actor "Company Recruiters" as recruiters
 
-'Frontend
-package "Frontend (React.js)" {
-  interface "Student Interface" as studentUI
-  interface "University Admin Interface" as adminUI
-  interface "Recruiter Interface" as recruiterUI
+' Define Frontend
+package "Frontend (React.js)" <<Frontend>> {
+  package "Student Interface" as studentUI <<Frontend>> {
+    component "Student Dashboard" as studentDashboard <<Frontend>>
+    component "Profile Management" as studentProfile <<Frontend>>
+    component "Job Search" as studentJobSearch <<Frontend>>
+    component "Event Participation" as studentEvent <<Frontend>>
+  }
+  
+  package "University Admin Interface" as adminUI <<Frontend>> {
+    component "Admin Dashboard" as adminDashboard <<Frontend>>
+    component "Student Management" as adminStudent <<Frontend>>
+    component "Event Management" as adminEvent <<Frontend>>
+    component "Reports" as adminReports <<Frontend>>
+  }
+  
+  package "Recruiter Interface" as recruiterUI <<Frontend>> {
+    component "Recruiter Dashboard" as recruiterDashboard <<Frontend>>
+    component "Job Posting" as recruiterJobPost <<Frontend>>
+    component "Applicant Tracking" as recruiterApplicant <<Frontend>>
+    component "Company Profile Management" as recruiterProfile <<Frontend>>
+  }
 }
 
-'Load Balancer
+' Define Load Balancer
 component "Load Balancer (NGINX or AWS ELB)" as loadBalancer
 
-'Backend
-package "Backend (Django)" {
-  component "Authentication Service" as authService
-  component "User Service" as userService
-  component "Search Service" as searchService
-  component "Event Service" as eventService
-  component "Job Service" as jobService
+' Define Backend
+package "Backend (Node.js/Express.js)" <<Backend>> {
+  component "Authentication Service" as authService <<Backend>>
+  component "User Service" as userService <<Backend>>
+  component "Search Service" as searchService <<Backend>>
+  component "Event Service" as eventService <<Backend>>
+  component "Job Service" as jobService <<Backend>>
 }
 
-'Databases
-database "PostgreSQL" as postgresql
-database "Elasticsearch" as elasticsearch
+' Define Databases
+database "PostgreSQL" as postgresql <<Database>>
+database "Elasticsearch" as elasticsearch <<Database>>
 
-'Auth0
-component "Auth0" as auth0
+' Define Auth0
+component "Auth0" as auth0 <<Auth0>>
 
-'Caching Layer
-component "Redis" as redis
+' Define Caching Layer
+component "Redis" as redis <<Redis>>
 
-'Storage
-component "AWS S3" as awsS3
+' Define Storage
+component "AWS S3" as awsS3 <<Storage>>
 
-'Users to Frontend
-students --> studentUI : "Use"
-admins --> adminUI : "Use"
-recruiters --> recruiterUI : "Use"
+' Users to Frontend
+students --> studentDashboard : "Access"
+students --> studentProfile : "Manage Profile"
+students --> studentJobSearch : "Search Jobs"
+students --> studentEvent : "Participate in Events"
+admins --> adminDashboard : "Access"
+admins --> adminStudent : "Manage Students"
+admins --> adminEvent : "Manage Events"
+admins --> adminReports : "View Reports"
+recruiters --> recruiterDashboard : "Access"
+recruiters --> recruiterJobPost : "Post Jobs"
+recruiters --> recruiterApplicant : "Track Applicants"
+recruiters --> recruiterProfile : "Manage Company Profile"
 
-'Frontend to Load Balancer
+' Frontend to Load Balancer
 studentUI --> loadBalancer
 adminUI --> loadBalancer
 recruiterUI --> loadBalancer
 
-'Load Balancer to Backend
+' Load Balancer to Backend
 loadBalancer --> authService
 loadBalancer --> userService
 loadBalancer --> searchService
 loadBalancer --> eventService
 loadBalancer --> jobService
 
-'Backend to Databases and Services
+' Backend to Databases and Services
 authService --> postgresql : "Store/Retrieve Data"
 userService --> postgresql : "Store/Retrieve Data"
 searchService --> elasticsearch : "Query Index"
 eventService --> postgresql : "Store/Retrieve Data"
 jobService --> postgresql : "Store/Retrieve Data"
 
-'Backend to Auth0
+' Backend to Auth0
 authService --> auth0 : "Token Validation"
 
-'Backend to Redis
+' Backend to Redis
 userService --> redis : "Cache Access"
 searchService --> redis : "Cache Access"
 eventService --> redis : "Cache Access"
 jobService --> redis : "Cache Access"
 
-'Backend to AWS S3
+' Backend to AWS S3
 jobService --> awsS3 : "Store/Retrieve Files"
+
+' Interactions between interfaces
+studentDashboard --> adminDashboard : "View University Info"
+studentJobSearch --> recruiterJobPost : "Apply for Jobs"
+adminStudent --> recruiterApplicant : "Share Student Profiles"
+recruiterDashboard --> adminEvent : "View and Attend University Events"
 
 @enduml

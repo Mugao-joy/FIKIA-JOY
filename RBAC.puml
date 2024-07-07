@@ -1,0 +1,106 @@
+@startuml Role-based Acess Control
+actor "Student" as student
+actor "University Admin" as universityAdmin
+actor "Company Recruiter" as companyRecruiter
+
+participant "Frontend (React.js)" as frontend
+participant "Backend (Node.js/Express.js)" as backend
+participant "Database (PostgreSQL)" as database
+
+'Roles and Permissions
+database -> backend : Define Roles (Student, University Admin, Recruiter)
+backend -> database : Store Roles
+database -> backend : Define Permissions (View, Manage, Connect, Create, Edit, Delete)
+backend -> database : Store Permissions
+
+' Assign Roles and Permissions
+database -> backend : Assign Roles to Users
+backend -> database : Store User Roles
+database -> backend : Assign Permissions to Roles
+backend -> database : Store Role Permissions
+
+' Student Interactions
+student -> frontend : Access University Dashboard
+frontend -> backend : Verify Student Role
+backend -> database : Check Student Role
+database -> backend : Return Student Role
+backend -> database : Check Permissions (View)
+database -> backend : Return Permissions
+backend -> frontend : Grant Access
+
+student -> frontend : View Events
+frontend -> backend : Verify Student Role
+backend -> database : Check Student Role
+database -> backend : Return Student Role
+backend -> database : Check Permissions (View)
+database -> backend : Return Permissions
+backend -> frontend : Grant Access
+
+student -> frontend : Apply to Jobs on Recruiter Dashboard
+frontend -> backend : Verify Student Role
+backend -> database : Check Student Role
+database -> backend : Return Student Role
+backend -> database : Check Permissions (View, Apply)
+database -> backend : Return Permissions
+backend -> frontend : Grant Access
+
+' University Admin Interactions
+universityAdmin -> frontend : Manage Student Records
+frontend -> backend : Verify University Admin Role
+backend -> database : Check University Admin Role
+database -> backend : Return University Admin Role
+backend -> database : Check Permissions (Manage)
+database -> backend : Return Permissions
+backend -> frontend : Grant Access
+
+universityAdmin -> frontend : Connect with Recruiters
+frontend -> backend : Verify University Admin Role
+backend -> database : Check University Admin Role
+database -> backend : Return University Admin Role
+backend -> database : Check Permissions (Connect)
+database -> backend : Return Permissions
+backend -> frontend : Grant Access
+
+universityAdmin -> frontend : Create/Edit/Delete Events
+frontend -> backend : Verify University Admin Role
+backend -> database : Check University Admin Role
+database -> backend : Return University Admin Role
+backend -> database : Check Permissions (Create, Edit, Delete)
+database -> backend : Return Permissions
+backend -> frontend : Grant Access
+
+' Recruiter Interactions
+companyRecruiter -> frontend : Connect with Universities
+frontend -> backend : Verify Recruiter Role
+backend -> database : Check Recruiter Role
+database -> backend : Return Recruiter Role
+backend -> database : Check Permissions (Connect)
+database -> backend : Return Permissions
+backend -> frontend : Grant Access
+
+companyRecruiter -> frontend : Refer Talent
+frontend -> backend : Verify Recruiter Role
+backend -> database : Check Recruiter Role
+database -> backend : Return Recruiter Role
+backend -> database : Check Permissions (Connect, Refer)
+database -> backend : Return Permissions
+backend -> frontend : Grant Access
+
+companyRecruiter -> frontend : Post/Edit/Delete Jobs
+frontend -> backend : Verify Recruiter Role
+backend -> database : Check Recruiter Role
+database -> backend : Return Recruiter Role
+backend -> database : Check Permissions (Create, Edit, Delete)
+database -> backend : Return Permissions
+backend -> frontend : Grant Access
+
+' General Permissions
+student -> frontend : View University Information
+frontend -> backend : Verify Student Role
+backend -> database : Check Student Role
+database -> backend : Return Student Role
+backend -> database : Check Permissions (View)
+database -> backend : Return Permissions
+backend -> frontend : Grant Access
+
+@enduml

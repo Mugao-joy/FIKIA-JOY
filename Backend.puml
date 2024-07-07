@@ -1,0 +1,81 @@
+@startuml Backend
+
+package "Backend Services" {
+
+  ' Authentication Service
+  component "Authentication Service" as authService {
+    rectangle "Auth Controller" as authController
+    rectangle "Auth Middleware" as authMiddleware
+    database "Users Table (PostgreSQL)" as usersTable
+  }
+
+  ' User Service
+  component "User Service" as userService {
+    rectangle "User Controller" as userController
+    rectangle "User Repository" as userRepository
+    database "Users Table (PostgreSQL)" as usersTable
+    cloud "Redis Cache" as redisCache
+  }
+
+  ' Search Service
+  component "Search Service" as searchService {
+    rectangle "Search Controller" as searchController
+    rectangle "Elasticsearch Client" as esClient
+    database "Search Index (Elasticsearch)" as searchIndex
+  }
+
+  ' Event Service
+  component "Event Service" as eventService {
+    rectangle "Event Controller" as eventController
+    rectangle "Event Repository" as eventRepository
+    database "Events Table (PostgreSQL)" as eventsTable
+    cloud "Redis Cache" as redisCache
+  }
+
+  ' Job Service
+  component "Job Service" as jobService {
+    rectangle "Job Controller" as jobController
+    rectangle "Job Repository" as jobRepository
+    database "Jobs Table (PostgreSQL)" as jobsTable
+    rectangle "File Storage (AWS S3)" as awsS3
+  }
+}
+
+' Interactions between Services
+authService --> userService : "Manage Users\n- Data Flow: User registration/profile updates"
+userService --> redisCache : "Cache Access\n- Data Flow: Cached user data"
+userService --> usersTable : "CRUD Operations\n- Data Flow: User data storage/retrieval"
+
+searchService --> esClient : "Search Queries\n- Data Flow: Search query processing"
+searchService --> searchIndex : "Index Data\n- Data Flow: Indexed data storage/retrieval"
+
+eventService --> eventRepository : "CRUD Operations\n- Data Flow: Event data storage/retrieval"
+eventService --> redisCache : "Cache Access\n- Data Flow: Cached event data"
+eventService --> eventsTable : "CRUD Operations\n- Data Flow: Event data storage/retrieval"
+
+jobService --> jobRepository : "CRUD Operations\n- Data Flow: Job data storage/retrieval"
+jobService --> awsS3 : "Store/Retrieve Files\n- Data Flow: Job-related file storage"
+jobService --> jobsTable : "CRUD Operations\n- Data Flow: Job data storage/retrieval"
+
+'data flow annotations for each service
+
+note left of authController : Handles user authentication requests.
+note left of authMiddleware : Middleware for authentication checks.
+
+note left of userController : Manages user-related endpoints.\nData Flow: User registration/profile updates.
+note left of userRepository : Interacts with the users table in PostgreSQL.
+note left of redisCache : Caches frequently accessed user data.
+
+note left of searchController : Handles search requests.\nData Flow: Search query processing.
+note left of esClient : Communicates with Elasticsearch for search queries.
+note left of searchIndex : Stores indexed data in Elasticsearch.
+
+note left of eventController : Manages event-related endpoints.\nData Flow: Event creation/update operations.
+note left of eventRepository : Interacts with the events table in PostgreSQL.
+note left of redisCache : Caches event data for improved performance.
+
+note left of jobController : Manages job-related endpoints.\nData Flow: Job creation/update operations.
+note left of jobRepository : Interacts with the jobs table in PostgreSQL.
+note left of awsS3 : Stores job-related files (e.g., resumes) in AWS S3.
+
+@enduml
